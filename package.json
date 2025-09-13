@@ -1,0 +1,17 @@
+{
+  "name": "learning-lc",
+  "version": "1.0.0",
+  "description": "LeetCode time tracking Chrome extension",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -f *.js *.js.map",
+    "dev": "npm run clean && npm run build",
+    "install-deps": "npm install"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.254",
+    "typescript": "^5.3.0"
+  },
+  "private": true
+}

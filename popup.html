@@ -1,0 +1,421 @@
+ <!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LeetCode Tracker</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 400px;
+        min-height: 500px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        overflow-x: hidden;
+      }
+
+      .container {
+        background: white;
+        margin: 8px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: slideIn 0.5s ease-out;
+      }
+
+      @keyframes slideIn {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+        50% { transform: translate(-50%, -50%) rotate(180deg); }
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .timer-display {
+        font-size: 18px;
+        font-weight: 600;
+        background: rgba(255,255,255,0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .problem-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #2d3748;
+        line-height: 1.4;
+      }
+
+      .tags-container {
+        margin-bottom: 20px;
+      }
+
+      .tags-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tag::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+      }
+
+      .tag:hover::before {
+        left: 100%;
+      }
+
+      .tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, #ed8936, #dd6b20);
+      }
+
+      .btn-info {
+        background: linear-gradient(135deg, #4299e1, #3182ce);
+      }
+
+      .stats-section {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 8px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3748;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #718096;
+        margin-top: 4px;
+      }
+
+      .recommendations {
+        margin-top: 20px;
+      }
+
+      .recommendation-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .recommendation-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s;
+      }
+
+      .recommendation-item:hover::before {
+        left: 100%;
+      }
+
+      .recommendation-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: #667eea;
+      }
+
+      .rec-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 4px;
+      }
+
+      .rec-meta {
+        font-size: 12px;
+        color: #718096;
+        display: flex;
+        gap: 12px;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 40px 20px;
+        color: #718096;
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 12px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .error {
+        background: #fed7d7;
+        color: #c53030;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 20px;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .slide-up {
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🚀 LeetCode Tracker</h1>
+        <div class="timer-display">
+          ⏱️ <span id="time">0s</span>
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        Fetching problem data…
+      </div>
+
+      <div id="content" class="content hidden">
+        <div class="problem-title" id="title">—</div>
+        
+        <div class="tags-container">
+          <span class="tags-label">🏷️ Current Tags</span>
+          <div id="tags" class="tags">—</div>
+        </div>
+
+        <div class="actions">
+          <button id="lastQuestionBtn" class="btn">
+            📚 Last Question
+          </button>
+          <button id="randomRecommendationBtn" class="btn btn-secondary">
+            🎲 Random Rec
+          </button>
+          <button id="randomRevisionBtn" class="btn btn-warning">
+            🔄 Random Rev
+          </button>
+          <button id="statsBtn" class="btn btn-info">
+            📊 Stats
+          </button>
+        </div>
+
+        <div id="statsSection" class="stats-section hidden">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value" id="totalProblems">0</span>
+              <span class="stat-label">Problems</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="totalTime">0s</span>
+              <span class="stat-label">Total Time</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="completedProblems">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="recommendationsCount">0</span>
+              <span class="stat-label">Recommendations</span>
+            </div>
+          </div>
+          <div id="tagStats" class="tags"></div>
+        </div>
+
+        <div id="recommendations" class="recommendations hidden">
+          <h3 style="margin-bottom: 12px; color: #2d3748;">💡 Recommendations</h3>
+          <div id="recommendationsList"></div>
+        </div>
+      </div>
+
+      <div id="error" class="error hidden"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
